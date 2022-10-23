@@ -3,17 +3,22 @@ package com.lion.domain;
 import com.lion.domain.parser.HospitalParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        LineReader<Hospital> hospitalLineReader = new LineReader<>(new HospitalParser());
-        String filename = "./서울시 병의원 위치 정보.csv";
-        List<Hospital> hospitals = hospitalLineReader.readLines(filename);
+        FileControler<Hospital> hospitalFileControler = new FileControler<>(new HospitalParser());
+        String filename = "./hospital.csv";
+        List<Hospital> hospitals = hospitalFileControler.readLines(filename);
 
         System.out.println(hospitals.size());
+        List<String> lines = new ArrayList<>();
         for (Hospital hospital : hospitals) {
-            System.out.println(hospital.getId());
+            lines.add(hospital.getSqlInsertQuery());
         }
+        String sqlFilename = "insertSeoulHospital.sql";
+        hospitalFileControler.createANewFile(sqlFilename);
+        hospitalFileControler.writeLines(lines, sqlFilename);
     }
 }
